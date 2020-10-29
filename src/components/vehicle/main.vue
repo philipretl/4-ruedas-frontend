@@ -1,6 +1,6 @@
 <template>
   <div class="main-vehicles">
-    <div class="max-w-full min-h-full h-full rounded  overflow-hidden shadow-lg bg-white mt-2 mx-2">
+    <div class="max-w-full rounded  overflow-auto shadow-lg bg-white mt-2 mx-2">
       <div class="flex flex-row-reverse pr-4 py-4">
         <button class="bg-gray-900 hover:bg-yellow-400 text-white font-bold py-2 px-4 rounded">
           Agregar Vehiculo
@@ -13,7 +13,7 @@
         <hr>
         <table class="table-fixed w-full mt-10">
           <thead>
-          <tr >
+          <tr>
             <th class="w-1/4 px-2 py-2 text-left">Placa</th>
             <th class="w-1/2 px-2 py-2 text-left">Marca</th>
             <th class="w-1/2 px-2 py-2 text-left">Modelo</th>
@@ -35,6 +35,8 @@
 </template>
 
 <script>
+import store from '@/store'
+
 export default{
 
 }

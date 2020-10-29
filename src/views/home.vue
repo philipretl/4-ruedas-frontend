@@ -1,17 +1,15 @@
 <template>
-  <div class="w-full bg-red-200 h-screen">
+  <div class="min-h-screen bg-red-200">
     <!-- Two columns -->
-    <div class="flex mb-4">
+    <div class="flex mb-4 ">
       <app-menu/>
-      <div class="w-screen h-screen bg-blue-400 overscroll-auto">
-        <div class="bg-gray-900 shadow-lg h-full fixed bottom-0  md:relative md:h-full z-10 w-full md:w-full pt-4">
-          <div id="logo" class="bg-yellow-400 h-1/4 rounded-lg mx-2">
-            <div class="text-center justify-center py-4 text-3xl text-white">
-                4 Ruedas parqueadero
-            </div>
+      <div class="bg-gray-900 shadow-lg pt-4 w-full">
+        <div id="logo" class="bg-yellow-400 h- rounded-lg mx-2">
+          <div class="text-center justify-center py-4 text-3xl min-w-full text-white">
+              4 Ruedas parqueadero
           </div>
-          <router-view/>
         </div>
+        <router-view/>
       </div>
     </div>
   </div>
