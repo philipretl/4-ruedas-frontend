@@ -27,3 +27,7 @@ npm run test:e2e
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+Info afelipe.vega@gmail.com
+
++57 3012017499
