@@ -10,20 +10,10 @@
       </div>
       <!-- Error Messages-->
       <template v-if="hasErrors">
-        <div>Existen errores con los datos:</div>
-        <ul class="ml-12 mt-6">
-          <li class="text-red-500" v-for="error in errors" :key="error.id">{{ error.message }}</li>
-        </ul>
+        <app-errors :errors="errors"/>
       </template>
       <template v-if="hasMessages">
-        <ul class="ml-12 mt-6">
-          <template v-for="message in messages">
-            <svg v-if=" message.message_code=== 'DELETED' " class="h-6 w-6 mr-6 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-            <li class="text-green-400" :key="message.id">{{ message.message }}</li>
-          </template>
-        </ul>
+       <app-messages :messages="messages"/>
       </template>
       <!-- modal body -->
 
@@ -60,8 +50,14 @@
 
 <script>
 import store from "@/store";
+import Messages from "@/components/messages";
+import Errors from "@/components/errors";
 
 export default{
+  components:{
+    'app-messages': Messages,
+    'app-errors': Errors
+  },
   props:{
     owner:{}
   },

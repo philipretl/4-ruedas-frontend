@@ -6,6 +6,10 @@
     <div v-if="isVisibleDeleteOwner">
       <app-delete-owner :owner="owner"/>
     </div>
+
+    <div v-if="isVisibleUpdateOwner">
+      <app-update-owner :owner="owner"/>
+    </div>
     <div class="max-w-full h-2/4 rounded-xl shadow-lg bg-white my-2 mx-2">
       <div  class="flex flex-row-reverse pr-4 py-4">
         <button @click="openRegisterOwner" class="flex bg-gray-900 hover:bg-yellow-400 text-white font-bold py-4 px-4 rounded">
@@ -18,7 +22,7 @@
 
       <div class="px-6 pt-4 pb-8 overflow-y-scroll mb-2" style="height: 70vh">
         <div class="text-3xl text-gray-900">
-          List de Propietarios
+          Lista de Propietarios
         </div>
         <hr>
 
@@ -40,7 +44,7 @@
               <td class="border px-4 py-2">{{ owner.full_name}}</td>
               <td class="border px-4 py-2">{{ owner.dni }}</td>
               <td class="border px-4 py-2 flex flex-row-reverse space-x-12 space-x-reverse pr-6">
-                <div class="text-yellow-400 h-6 w-6">
+                <div @click="openUpdateOwner(owner)" class="text-yellow-400 h-6 w-6">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
                     <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
@@ -75,6 +79,7 @@ import store from "@/store";
 import Loading from '@/components/loading'
 import CreateOwner from '@/components/owner/create-owner'
 import DeleteOwner from '@/components/owner/delete-owner'
+import UpdateOwner from '@/components/owner/update-owner'
 
 export default{
   data(){
@@ -86,6 +91,7 @@ export default{
     'app-loading' : Loading,
     'app-create-owner': CreateOwner,
     'app-delete-owner': DeleteOwner,
+    'app-update-owner': UpdateOwner,
   },
   async created() {
     await store.dispatch('owners/loadOwnersServer');
@@ -105,6 +111,9 @@ export default{
     },
     isVisibleDeleteOwner(){
       return store.getters['owners/isDeletingOwner'];
+    },
+    isVisibleUpdateOwner(){
+      return store.getters['owners/isUpdatingOwner'];
     }
   },
   methods:{
@@ -114,6 +123,10 @@ export default{
     openDeleteOwner(owner){
       this.owner = owner;
       store.dispatch('owners/establishDeletingOwner', true);
+    },
+    openUpdateOwner(owner){
+      this.owner = owner;
+      store.dispatch('owners/establishUpdatingOwner', true);
     }
   }
 }

@@ -60,7 +60,7 @@ const owners = {
         },
         getMessages(state){
             return state.messages;
-        }
+        },
     },
     mutations:{
         setLoading(state, loading){
@@ -68,9 +68,7 @@ const owners = {
         },
 
         setOwner(state, owner){
-            state.owner.full_name = owner.full_name;
-            state.owner.dni = owner.dni;
-            state.owner.id = owner.id;
+            state.owner = owner;
             state.owners_list.push(state.owner);
         },
 
@@ -101,7 +99,9 @@ const owners = {
         setMessages(state, messages){
             state.messages = messages;
         },
-
+        replaceOwner(state, data){
+            state.owners_list.splice(data.index, 1, data.owner_updated);
+        },
         setProcess(state, process){
             state.process = {
                 executing: process.executing,
@@ -126,12 +126,25 @@ const owners = {
             context.commit('setLoading', false);
 
         },
+
         registerOwnerServer: async (context, owner)=>{
             context.commit('setLoading', true);
             await api.registerOwner(owner);
             context.commit('setLoading', false);
 
         },
+
+        updateOwnerServer: async (context, data)=>{
+            context.commit('setLoading', true);
+            context.commit('setProcess', {
+                executing: true,
+                action: 'put',
+                status: 'uncompleted'
+            });
+            await api.updateOwner(data.owner_to_update, data.owner_id);
+
+        },
+
         registerOwnersList(context, response){
 
             if(api_utils.containsCodeMessage(response.api_data.messages, 'EMPTY_LIST')){
@@ -146,15 +159,43 @@ const owners = {
                 response.api_data.data.owners_paginated.meta
             );
         },
+        updateOwner(context, response){
+            let owner_list = store.getters['owners/ownersList'];
+            let index =  owner_list.findIndex(owner => owner.id === response.api_data.data.owner.id);
+            context.commit('replaceOwner',{
+                index: index,
+                owner_updated: {
+                    id: response.api_data.data.owner.id,
+                    full_name : response.api_data.data.owner.full_name,
+                    dni: response.api_data.data.owner.dni,
+                    name: response.api_data.data.owner.name,
+                    last_name: response.api_data.data.owner.last_name,
+                }
+            });
+            context.commit('setCreatingOwner', false);
+            context.commit('setLoading', false);
+        },
 
         registerOwner(context, response){
             context.commit('setOwner',{
                 id: response.api_data.data.owner.id,
                 full_name : response.api_data.data.owner.full_name,
                 dni: response.api_data.data.owner.dni,
+                name: response.api_data.data.owner.name,
+                last_name: response.api_data.data.owner.last_name,
             });
             context.commit('setCreatingOwner', false);
             context.commit('setLoading', false);
+        },
+
+        deleteOwnerServer: async(context, owner_id)=>{
+            context.commit('setLoading', true);
+            context.commit('setProcess', {
+                executing: true,
+                action: 'delete',
+                status: 'uncompleted'
+            });
+            await api.deleteOwner(owner_id);
         },
 
         establishErrors(context, response){
@@ -178,21 +219,11 @@ const owners = {
             context.commit('setErrors',[]);
         },
 
-        deleteOwnerServer: async(context, owner_id)=>{
-            context.commit('setLoading', true);
-            context.commit('setProcess', {
-                executing: true,
-                action: 'delete',
-                status: 'uncompleted'
-            });
-            await api.deleteOwner(owner_id);
-        },
         establishProcess: async function (context, process){
             context.commit('setLoading', false);
             context.commit('setProcess', process);
-            console.log('process api js ');
-            console.log(process);
-            if(process.status === 'completed'){
+
+            if(process.status === 'completed' && process.action === 'delete'){
                 context.commit('setMessages', [
                     {
                         message_code : 'DELETED',
@@ -205,7 +236,25 @@ const owners = {
                 context.commit("setMessages", []);
                 context.commit('setProcess', {
                     executing: false,
-                    action: 'delete',
+                    action: '',
+                    status: 'uncompleted'
+                });
+            }
+
+            if(process.status === 'completed' && process.action === 'put'){
+                context.commit('setMessages', [
+                    {
+                        message_code : 'UPDATED',
+                        message: 'Propietario actualizado correctamente',
+                    }
+                ]);
+                await sleep(2000);
+                await store.dispatch('owners/loadOwnersServer');
+                await store.dispatch('owners/establishUpdatingOwner', false);
+                context.commit("setMessages", []);
+                context.commit('setProcess', {
+                    executing: false,
+                    action: '',
                     status: 'uncompleted'
                 });
             }

@@ -36,6 +36,47 @@ export default {
         );
     },
 
+    updateOwner: async (owner, owner_id) => {
+        let response;
+        try {
+            //call to axios
+            response = await client_stores.put('/api/v1/owner/update/'+ owner_id, owner);
+        } catch (error) {
+            response = error.response;
+        }
+        if (response.status === 400) {
+            await store.dispatch( 'owners/establishErrors',
+                {
+                    api_data: response.data,
+                    code: response.status
+                }
+            );
+
+            await store.dispatch(
+                'owners/establishProcess',
+                {executing: false, action: 'put', status: 'uncompleted'}
+            );
+
+            return;
+        }
+        if (response.status !== 200) {
+            await utils.handleErrorsFromServer(
+                response.data.errors,
+                response.data.messages,
+                response.status
+            );
+            await store.dispatch(
+                'owners/establishProcess',
+                {executing: false, action: 'put', status: 'uncompleted'}
+            );
+            return;
+        }
+        await store.dispatch(
+            'owners/establishProcess',
+            {executing: false, action: 'put', status: 'completed'}
+        );
+    },
+
     deleteOwner: async (owner_id) => {
         let response;
         let body = {
