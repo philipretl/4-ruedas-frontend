@@ -1,22 +1,51 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Home from '../views/home.vue'
+import Vehicles from '@/components/vehicle/main'
+import Owners from '@/components/owner/main'
+import ErrorNotFound from '@/components/errors/not-found-exception'
+import Forbidden from '@/components/errors/forbidden'
+import ErrorServer from '@/components/errors/server-error'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'home',
+    component: Home,
+    children : [
+      {
+        path:'vehicles',
+        name: 'vehicles',
+        component: Vehicles
+      },
+      {
+        path:'owners',
+        name: 'owners',
+        component: Owners
+      }
+    ]
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    path: '/404',
+    name: '404',
+    component: ErrorNotFound
+  },
+  {
+    path: '/403',
+    name: '403',
+    component: Forbidden
+  },
+  {
+    path: '/error-server',
+    name: 'error_server',
+    component: ErrorServer,
+    props: true,
+  },
+  {
+    path: '*',
+    redirect: '/404'
   }
 ]
 
